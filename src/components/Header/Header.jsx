@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container, Logo, LogoutBtn } from "../index";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Menu, X } from "lucide-react"; // Install lucide-react if not yet
+import { Menu, X } from "lucide-react";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
@@ -16,10 +16,11 @@ function Header() {
     { name: "Add Post", slug: "/add-post", active: authStatus },
   ];
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleMenu = () => setMenuOpen((prev) => !prev);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className="bg-[#151521] shadow-md py-4 px-4 text-white">
+    <header className="bg-[#151521] shadow-md py-4 px-4 text-white relative">
       <Container>
         <nav className="flex items-center justify-between">
           {/* Logo */}
@@ -27,17 +28,17 @@ function Header() {
             <Logo width="70px" />
           </NavLink>
 
-          {/* Hamburger - only visible on mobile */}
+          {/* Hamburger button for mobile */}
           <div className="md:hidden">
             <button onClick={toggleMenu} aria-label="Toggle menu">
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+              {menuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
 
-          {/* Nav Links */}
+          {/* Nav links */}
           <ul
-            className={`flex flex-col md:flex-row items-start md:items-center gap-3 absolute md:static top-16 left-0 w-full md:w-auto bg-[#151521] px-4 py-6 md:p-0 transition-all duration-300 z-50 ${
-              menuOpen ? "block" : "hidden md:flex"
+            className={`absolute top-full left-0 w-full md:static md:flex md:items-center md:gap-3 bg-[#151521] md:bg-transparent flex-col md:flex-row transition-all duration-200 ease-in-out z-50 ${
+              menuOpen ? "flex" : "hidden md:flex"
             }`}
           >
             {navItems.map((item) =>
@@ -45,9 +46,9 @@ function Header() {
                 <li key={item.name} className="w-full md:w-auto">
                   <NavLink
                     to={item.slug}
-                    onClick={() => setMenuOpen(false)} // Close menu on click
+                    onClick={closeMenu}
                     className={({ isActive }) =>
-                      `block px-5 py-2 text-sm font-medium rounded-full transition duration-200 w-full ${
+                      `block px-5 py-2 text-sm font-medium rounded-full transition duration-200 text-center ${
                         isActive
                           ? "bg-purple-700 text-white"
                           : "hover:bg-purple-600"
@@ -60,9 +61,8 @@ function Header() {
               ) : null
             )}
 
-            {/* Logout */}
             {authStatus && (
-              <li className="w-full md:w-auto">
+              <li className="w-full md:w-auto text-center">
                 <LogoutBtn />
               </li>
             )}
